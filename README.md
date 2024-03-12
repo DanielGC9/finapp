@@ -1,1 +1,2 @@
 # finapp
+This repo 
