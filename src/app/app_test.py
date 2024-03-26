@@ -10,6 +10,7 @@
 import sys
 import streamlit as st
 import pandas as pd
+import numpy as np
 import plotly.express as px
 from streamlit_extras.metric_cards import style_metric_cards
 from datetime import datetime
@@ -22,8 +23,11 @@ from src.utils.functions import import_data, pie
 today = datetime.now()
 # import the data to a dataframe
 data = import_data().dropna()
+data['Date'] = data['Date'].astype('datetime64[ns]')
 income = data[data['Category'] == 'Income']
 expences = data[data['Category'] != 'Income']
+expences['Month'] = expences['Date'].dt.strftime('%b')
+
 
 
 def summary_page():
@@ -55,24 +59,31 @@ def summary_page():
         def pie(title, dataframe, x, y):
             fig = px.pie(dataframe, values=x, names=y, width=500, height=500)
             fig.update_traces(textposition='inside', textinfo='percent+label')
-            fig.update_layout(legend=dict(
-                              title=None, orientation="h", y=1, yanchor="bottom", x=0.5, xanchor="center"))
+            fig.update_layout(showlegend=False)
             st.plotly_chart(fig, use_container_width=True, theme=None)
 
         pie('Income',expences, 'Amount', 'Category')
     with div2:
         st.header("Bar Chart")
         def bar(title, dataframe, x, y):
-            df = dataframe.sort_values(by=x, ascending=True)
+            df = dataframe.groupby(x)[y].sum().reset_index().sort_values(by=y, ascending=False)
             fig = px.bar(df, x=x, y=y, width=500, height=500)
-            fig.update_layout(legend=dict(
-                              title=None, orientation="h", y=1, yanchor="bottom", x=0.5, xanchor="center"))
+            #fig.update_traces(textposition='inside', textinfo='label')
+            fig.update_layout(showlegend=False)
             st.plotly_chart(fig, use_container_width=True, theme=None)
 
         bar('Income',expences, 'Category', 'Amount')
 
+    st.header("Bar Chart")
+    def bar(dataframe, x, y):
+        df = dataframe.groupby([x, 'Category'])[y].sum().reset_index().sort_values(by=y, ascending=True)
+        fig = px.bar(df, x=y, y=x, color='Category', width=500, height=500, orientation='h')
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(fig, use_container_width=True, theme=None)
 
-    st.header("Dataframe")
+    bar(expences, 'Month', 'Amount')
+
+    st.header("Table")
     st.dataframe(expences, use_container_width=True)
 
 def categories_page():
@@ -82,15 +93,20 @@ def categories_page():
     st.sidebar.header('Filters')
     category = st.sidebar.multiselect(
         'Select Category',
-        options=expences['Category'].unique(),
-        default=['Food']
+        options = np.append(['All'], expences['Category'].unique()),
+        default=['All']
     )
+
+    if  ['All'] == category:
+        category = list(expences['Category'].unique())
 
     pay_method = st.sidebar.multiselect(
         'Select Pay Method',
-        options=expences['PayMethod'].unique(),
-        default=expences['PayMethod'].unique()
+        options=np.append(['All'], expences['PayMethod'].unique()),
+        default=['All']
     )
+    if ['All'] == pay_method:
+        pay_method = list(expences['PayMethod'].unique())
 
     start_date = st.sidebar.date_input(
         'Start Date',
@@ -105,7 +121,7 @@ def categories_page():
 
     expences_f = expences.query(
         'Category == @category & PayMethod == @pay_method & Date >= @start_date & Date <= @end_date'
-    )
+    ).reset_index(drop=True)
 
     col1, col2, col3, col4 = st.columns(4)
 
@@ -124,7 +140,8 @@ def categories_page():
 
     style_metric_cards(background_color='white', border_left_color='#1f66bd')
 
-    st.dataframe(expences_f)
+
+    st.dataframe(expences_f, use_container_width=True)
 
 
 #st.set_page_config(page_title="Notion Dashboard", page_icon="💳", layout="wide")
