@@ -1,2 +1,8 @@
 # env
 .env
+
+#path
+*.json
+
+#config
+*.toml

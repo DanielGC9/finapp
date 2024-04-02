@@ -6,6 +6,7 @@ Created by: @DanielGuzman
 Date: 2023-06-01
 """
 import os
+import re
 import requests
 from datetime import datetime
 import pandas as pd
@@ -100,3 +101,26 @@ def pie(title, dataframe, x, y):
     fig.update_traces(textposition='inside', textinfo='percent+label')
     fig.update_layout(legend_title='Categories', legend_y=0.5)
     st.plotly_chart(fig, use_container_width=True, theme=None)
+
+
+def validate_email(email):
+    """
+    This function validates if an email is valid
+    """
+    patern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+
+    if re.match(patern, email):
+        return True
+    else:
+        return False
+
+def validate_username(user):
+    """
+    This function validates if an username is valid
+    """
+    patern = r'^[a-zA-Z0-9._+-]+$'
+
+    if re.match(patern, user):
+        return True
+    else:
+        return False

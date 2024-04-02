@@ -13,6 +13,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 from streamlit_extras.metric_cards import style_metric_cards
+from streamlit_extras.mandatory_date_range import date_range_picker
 from datetime import datetime
 from streamlit_option_menu import option_menu
 sys.path.append('.')
@@ -28,7 +29,7 @@ income = data[data['Category'] == 'Income']
 expences = data[data['Category'] != 'Income']
 expences['Month'] = expences['Date'].dt.strftime('%b')
 
-
+st.set_page_config(page_title="FinApp", page_icon="💳", layout="wide")
 
 def summary_page():
 
@@ -135,7 +136,7 @@ def categories_page():
                 value = f"{expences_f['Amount'].sum() / income_f['Amount'].sum() * 100:.2f}%",
                 delta = 'Percentage spent')
     col4.metric("Income",
-                value=f"{income['Amount'].sum():,.0f}$",
+                value=f"{income_f['Amount'].sum():,.0f}$",
                 delta='Total income COP')
 
     style_metric_cards(background_color='white', border_left_color='#1f66bd')
@@ -167,3 +168,5 @@ if selected == "Summary":
     summary_page()
 elif selected == "Categories":
     categories_page()
+
+st.sidebar.write('<p>Made with ❤️ by <br> @DanielGuzman <br> @JuliethAlvarado </p>', unsafe_allow_html=True, )
