@@ -20,6 +20,9 @@ sys.path.append('.')
 from src.utils.functions import import_data, pie
 #from src.app.pages.summary import summary_page
 #from src.app.pages.categories import categories_page
+from dotenv import load_dotenv
+
+load_dotenv()
 
 today = datetime.now()
 # import the data to a dataframe
@@ -33,63 +36,68 @@ st.set_page_config(page_title="FinApp", page_icon="💳", layout="wide")
 
 def summary_page():
 
-    st.write("# Summary",)
-    
-    col1, col2, col3, col4 = st.columns(4)
+    st.write("# Expense Management",)
 
-    col1.metric('Total Records',
-                value = expences.shape[0],
-                delta= 'All expenses')    
-    col2.metric("Total Amount",
-                value=f"{expences['Amount'].sum():,.0f}$",
-                delta='Total COP amount')
-    col3.metric("Percentage", 
-                value = f"{expences['Amount'].sum() / income['Amount'].sum() * 100:.2f}%",
-                delta = 'Percentage spent')
-    col4.metric("Income",
-                value=f"{income['Amount'].sum():,.0f}$",
-                delta='Total income COP')
+    tab1, tab2 = st.tabs(['Sumary', 'By Category'])
 
-    style_metric_cards(background_color='white', border_left_color='#1f66bd')
+    with tab1:
+        col1, col2, col3, col4 = st.columns(4)
 
-    st.markdown("""---""")
+        col1.metric('Total Records',
+                    value = expences.shape[0],
+                    delta= 'All expenses')
+        col2.metric("Total Amount",
+                    value=f"{expences['Amount'].sum():,.0f}$",
+                    delta='Total COP amount')
+        col3.metric("Percentage",
+                    value = f"{expences['Amount'].sum() / income['Amount'].sum() * 100:.2f}%",
+                    delta = 'Percentage spent')
+        col4.metric("Income",
+                    value=f"{income['Amount'].sum():,.0f}$",
+                    delta='Total income COP')
 
-    div1, div2 = st.columns(2)
-    with div1:
-        st.header("Expenses")
-        def pie(title, dataframe, x, y):
-            fig = px.pie(dataframe, values=x, names=y, width=500, height=500)
-            fig.update_traces(textposition='inside', textinfo='percent+label')
-            fig.update_layout(showlegend=False)
-            st.plotly_chart(fig, use_container_width=True, theme=None)
+        style_metric_cards(background_color='white', border_left_color='#1f66bd')
 
-        pie('Income',expences, 'Amount', 'Category')
-    with div2:
+        st.markdown("""---""")
+
+        div1, div2 = st.columns(2)
+        with div1:
+            st.header("Expenses")
+            def pie(title, dataframe, x, y):
+                fig = px.pie(dataframe, values=x, names=y, width=500, height=500)
+                fig.update_traces(textposition='inside', textinfo='percent+label')
+                fig.update_layout(showlegend=False)
+                st.plotly_chart(fig, use_container_width=True, theme=None)
+
+            pie('Income',expences, 'Amount', 'Category')
+        with div2:
+            st.header("Bar Chart")
+            def bar(title, dataframe, x, y):
+                df = dataframe.groupby(x)[y].sum().reset_index().sort_values(by=y, ascending=False)
+                fig = px.bar(df, x=x, y=y, width=500, height=500)
+                #fig.update_traces(textposition='inside', textinfo='label')
+                fig.update_layout(showlegend=False)
+                st.plotly_chart(fig, use_container_width=True, theme=None)
+
+            bar('Income',expences, 'Category', 'Amount')
+
         st.header("Bar Chart")
-        def bar(title, dataframe, x, y):
-            df = dataframe.groupby(x)[y].sum().reset_index().sort_values(by=y, ascending=False)
-            fig = px.bar(df, x=x, y=y, width=500, height=500)
-            #fig.update_traces(textposition='inside', textinfo='label')
+        def bar(dataframe, x, y):
+            df = dataframe.groupby([x, 'Category'])[y].sum().reset_index().sort_values(by=y, ascending=True)
+            fig = px.bar(df, x=y, y=x, color='Category', width=500, height=500, orientation='h')
             fig.update_layout(showlegend=False)
             st.plotly_chart(fig, use_container_width=True, theme=None)
 
-        bar('Income',expences, 'Category', 'Amount')
+        bar(expences, 'Month', 'Amount')
 
-    st.header("Bar Chart")
-    def bar(dataframe, x, y):
-        df = dataframe.groupby([x, 'Category'])[y].sum().reset_index().sort_values(by=y, ascending=True)
-        fig = px.bar(df, x=y, y=x, color='Category', width=500, height=500, orientation='h')
-        fig.update_layout(showlegend=False)
-        st.plotly_chart(fig, use_container_width=True, theme=None)
+        st.header("Table")
+        st.dataframe(expences, use_container_width=True)
 
-    bar(expences, 'Month', 'Amount')
-
-    st.header("Table")
-    st.dataframe(expences, use_container_width=True)
+    with tab2:
+        categories_page()
 
 def categories_page():
     st.write("# 💰 Categories")
-    st.markdown("""---""")
 
     st.sidebar.header('Filters')
     category = st.sidebar.multiselect(
@@ -128,11 +136,11 @@ def categories_page():
 
     col1.metric('Total Records',
                 value = expences_f.shape[0],
-                delta= 'All expenses')    
+                delta= 'All expenses')
     col2.metric("Total Amount",
                 value=f"{expences_f['Amount'].sum():,.0f}$",
                 delta='Total COP amount')
-    col3.metric("Percentage", 
+    col3.metric("Percentage",
                 value = f"{expences_f['Amount'].sum() / income_f['Amount'].sum() * 100:.2f}%",
                 delta = 'Percentage spent')
     col4.metric("Income",
@@ -154,12 +162,12 @@ st.sidebar.image("data/images/finapp.png",caption="Personal Finance Dashboard")
 
 
 with st.sidebar:
-    selected = option_menu(None, ["Summary", "Categories"], 
-    icons=['house', "list-task"], 
+    selected = option_menu(None, ["Summary", "Categories"],
+    icons=['house', "list-task"],
     menu_icon="cast", default_index=0, orientation="vertical",
     styles={
         "container": {"padding": "sidebar", "background-color": "#fafafa"},
-        "icon": {"color": "black", "font-size": "15px"}, 
+        "icon": {"color": "black", "font-size": "15px"},
         "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "##1f66bd"},
         "nav-link-selected": {"background-color": "#1f66bd"},
     }
