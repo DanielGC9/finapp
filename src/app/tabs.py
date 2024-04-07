@@ -5,20 +5,21 @@ from streamlit_extras.metric_cards import style_metric_cards
 from matplotlib.colors import BoundaryNorm, ListedColormap
 import plotly.express as px
 from datetime import datetime
+from src.utils.graphics_visuals import discrete_colorscale
 
 
 def summary_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
     col1, col2, col3, col4 = st.columns(4)
 
     col1.metric('Total Records',
-                value = df_expenses.shape[0],
-                delta= 'All expenses')
+                value=df_expenses.shape[0],
+                delta='All expenses')
     col2.metric("Total Amount",
                 value=f"{df_expenses['Amount'].sum():,.0f}$",
                 delta='Total COP amount')
     col3.metric("Percentage",
-                value = f"{df_expenses['Amount'].sum() / df_income['Amount'].sum() * 100:.2f}%",
-                delta = 'Percentage spent')
+                value=f"{df_expenses['Amount'].sum() / df_income['Amount'].sum() * 100:.2f}%",
+                delta='Percentage spent')
     col4.metric("Income",
                 value=f"{df_income['Amount'].sum():,.0f}$",
                 delta='Total income COP')
@@ -30,44 +31,54 @@ def summary_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
     div1, div2 = st.columns(2)
     with div1:
         st.header("Expenses")
+
         def pie(title, dataframe, x, y):
             fig = px.pie(dataframe, values=x, names=y, width=500, height=500)
             fig.update_traces(textposition='inside', textinfo='percent+label')
             fig.update_layout(showlegend=False)
             st.plotly_chart(fig, use_container_width=True, theme=None)
 
-        pie('Income',df_expenses, 'Amount', 'Category')
+        pie('Income', df_expenses, 'Amount', 'Category')
     with div2:
         st.header("Bar Chart")
+
         def bar(title, dataframe, x, y):
-            df = dataframe.groupby(x)[y].sum().reset_index().sort_values(by=y, ascending=False)
+            df = dataframe.groupby(x)[y].sum().reset_index(
+            ).sort_values(by=y, ascending=False)
             fig = px.bar(df, x=x, y=y, width=500, height=500)
-            #fig.update_traces(textposition='inside', textinfo='label')
+            # fig.update_traces(textposition='inside', textinfo='label')
             fig.update_layout(showlegend=False)
             st.plotly_chart(fig, use_container_width=True, theme=None)
 
         bar('Income', df_expenses, 'Category', 'Amount')
 
+    # Bar Chart
     st.header("Bar Chart")
+
     def bar(dataframe, x, y):
-        df = dataframe.groupby([x, 'Category'])[y].sum().reset_index().sort_values(by=y, ascending=True)
-        fig = px.bar(df, x=y, y=x, color='Category', width=500, height=500, orientation='h')
+        df = dataframe.groupby([x, 'Category'])[y].sum(
+        ).reset_index().sort_values(by=y, ascending=True)
+        fig = px.bar(df, x=y, y=x, color='Category',
+                     width=500, height=500, orientation='h')
         fig.update_layout(showlegend=False)
         st.plotly_chart(fig, use_container_width=True, theme=None)
 
     bar(df_expenses, 'Month', 'Amount')
 
+    # Expenses Timeline
     st.header("Expenses Timeline")
     df_expenses.loc[:, 'Day'] = df_expenses['Date'].dt.day
     timeline_data = df_expenses[['Day', 'Category', 'Amount']]
     pivoted_data = pd.pivot_table(timeline_data,
-                                values='Amount',
-                                index='Category',
-                                columns='Day')
+                                  values='Amount',
+                                  index='Category',
+                                  columns='Day',
+                                  aggfunc=sum)
 
     # Completing missing days (no expeses registered) with NaN
     days_month = np.arange(1, df_expenses['Date'].dt.days_in_month.iloc[0]+1)
-    missing_days = [day for day in days_month if day not in pivoted_data.columns]
+    missing_days = [
+        day for day in days_month if day not in pivoted_data.columns]
 
     for day in missing_days:
         pivoted_data[day] = pd.Series(dtype='int')
@@ -85,7 +96,9 @@ def summary_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
     width = cell_size*len(pivoted_data.columns)
     height = cell_size*len(pivoted_data.index)
 
-    fig = px.imshow(pivoted_data, color_continuous_scale=heatmap_colors)
+    colorscale = discrete_colorscale(limits, heatmap_colors)
+
+    fig = px.imshow(pivoted_data, color_continuous_scale=colorscale)
 
     for i in range(len(pivoted_data.columns)):
         fig.add_shape(type="line",
@@ -102,7 +115,6 @@ def summary_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
                       y1=0.5 + i, line=dict(color="white", width=2))
     st.plotly_chart(fig, use_container_width=True, theme=None)
 
-
     st.header("Table")
     st.dataframe(df_expenses, use_container_width=True)
 
@@ -113,11 +125,11 @@ def categories_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
     st.sidebar.header('Filters')
     category = st.sidebar.multiselect(
         'Select Category',
-        options = np.append(['All'], df_expenses['Category'].unique()),
+        options=np.append(['All'], df_expenses['Category'].unique()),
         default=['All']
     )
 
-    if  ['All'] == category:
+    if ['All'] == category:
         category = list(df_expenses['Category'].unique())
 
     pay_method = st.sidebar.multiselect(
@@ -146,19 +158,18 @@ def categories_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
     col1, col2, col3, col4 = st.columns(4)
 
     col1.metric('Total Records',
-                value = expenses_f.shape[0],
-                delta= 'All expenses')
+                value=expenses_f.shape[0],
+                delta='All expenses')
     col2.metric("Total Amount",
                 value=f"{expenses_f['Amount'].sum():,.0f}$",
                 delta='Total COP amount')
     col3.metric("Percentage",
-                value = f"{expenses_f['Amount'].sum() / income_f['Amount'].sum() * 100:.2f}%",
-                delta = 'Percentage spent')
+                value=f"{expenses_f['Amount'].sum() / income_f['Amount'].sum() * 100:.2f}%",
+                delta='Percentage spent')
     col4.metric("Income",
                 value=f"{income_f['Amount'].sum():,.0f}$",
                 delta='Total income COP')
 
     style_metric_cards(background_color='white', border_left_color='#1f66bd')
-
 
     st.dataframe(expenses_f, use_container_width=True)
