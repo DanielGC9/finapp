@@ -6,6 +6,7 @@ from matplotlib.colors import BoundaryNorm, ListedColormap
 import plotly.express as px
 from datetime import datetime
 from src.utils.graphics_visuals import discrete_colorscale
+from src.utils.graphics_visuals import pie, bar_1, bar_2
 
 
 def summary_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
@@ -28,45 +29,25 @@ def summary_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
 
     st.markdown("""---""")
 
+    # Pie chart and Bar chart by category
     div1, div2 = st.columns(2)
     with div1:
         st.header("Expenses")
+        fig = pie('Income', df_expenses, 'Amount', 'Category')
+        st.plotly_chart(fig, use_container_width=True, theme=None)
 
-        def pie(title, dataframe, x, y):
-            fig = px.pie(dataframe, values=x, names=y, width=500, height=500)
-            fig.update_traces(textposition='inside', textinfo='percent+label')
-            fig.update_layout(showlegend=False)
-            st.plotly_chart(fig, use_container_width=True, theme=None)
-
-        pie('Income', df_expenses, 'Amount', 'Category')
     with div2:
         st.header("Bar Chart")
-
-        def bar(title, dataframe, x, y):
-            df = dataframe.groupby(x)[y].sum().reset_index(
-            ).sort_values(by=y, ascending=False)
-            fig = px.bar(df, x=x, y=y, width=500, height=500)
-            # fig.update_traces(textposition='inside', textinfo='label')
-            fig.update_layout(showlegend=False)
-            st.plotly_chart(fig, use_container_width=True, theme=None)
-
-        bar('Income', df_expenses, 'Category', 'Amount')
+        fig = bar_1('Income', df_expenses, 'Category', 'Amount')
+        st.plotly_chart(fig, use_container_width=True, theme=None)
 
     # Bar Chart
     st.header("Bar Chart")
-
-    def bar(dataframe, x, y):
-        df = dataframe.groupby([x, 'Category'])[y].sum(
-        ).reset_index().sort_values(by=y, ascending=True)
-        fig = px.bar(df, x=y, y=x, color='Category',
-                     width=500, height=500, orientation='h')
-        fig.update_layout(showlegend=False)
-        st.plotly_chart(fig, use_container_width=True, theme=None)
-
-    bar(df_expenses, 'Month', 'Amount')
+    fig = bar_2(df_expenses, 'Month', 'Amount')
+    st.plotly_chart(fig, use_container_width=True, theme=None)
 
     # Expenses Timeline
-    st.header("Expenses Timeline")
+    st.header("Expenses Timeline :calendar:")
     df_expenses.loc[:, 'Day'] = df_expenses['Date'].dt.day
     timeline_data = df_expenses[['Day', 'Category', 'Amount']]
     pivoted_data = pd.pivot_table(timeline_data,

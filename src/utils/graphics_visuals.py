@@ -1,3 +1,30 @@
+import plotly.express as px
+import streamlit as st
+
+
+def pie(title, dataframe, x, y):
+    fig = px.pie(dataframe, values=x, names=y, width=500, height=500)
+    fig.update_traces(textposition='inside', textinfo='percent+label')
+    fig.update_layout(showlegend=False)
+    return fig
+
+
+def bar_1(title, dataframe, x, y):
+    df = dataframe.groupby(x)[y].sum().reset_index(
+    ).sort_values(by=y, ascending=False)
+    fig = px.bar(df, x=x, y=y, width=500, height=500)
+    # fig.update_traces(textposition='inside', textinfo='label')
+    fig.update_layout(showlegend=False)
+    return fig
+
+
+def bar_2(dataframe, x, y):
+    df = dataframe.groupby([x, 'Category'])[y].sum(
+    ).reset_index().sort_values(by=y, ascending=True)
+    fig = px.bar(df, x=y, y=x, color='Category',
+                 width=500, height=500, orientation='h')
+    fig.update_layout(showlegend=False)
+    return fig
 
 
 def discrete_colorscale(bvals, colors):

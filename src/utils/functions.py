@@ -1,5 +1,5 @@
 """
-In this module, you can find functions that 
+In this module, you can find functions that
 are used in other modules.
 
 Created by: @DanielGuzman
@@ -33,7 +33,7 @@ def create_dataframe(data)-> pd.DataFrame:
 
     # Extraer los datos de los registros
     records = data['results']
-    
+
     # Convertir los datos en un formato adecuado para un DataFrame de Pandas
     records_data = []
     for record in records:
@@ -42,17 +42,17 @@ def create_dataframe(data)-> pd.DataFrame:
             date = datetime.strptime(date_str, '%Y-%m-%d').date()
         else:
             date = None
-        
+
         name = record['properties']['Name'].get('title', [{}])[0].get('plain_text', None)
         category = record['properties']['Cat'].get('formula', {}).get('string', '').lstrip('@')
         amount = record['properties']['Amount'].get('number', None)
-        
+
         pay_method_list = record['properties']['Método de pago'].get('multi_select', [])
         if pay_method_list:
             pay_method = pay_method_list[0].get('name', None)
         else:
             pay_method = None
-        
+
         row = {
             'Date': date,
             'Name': name,
@@ -63,6 +63,7 @@ def create_dataframe(data)-> pd.DataFrame:
         records_data.append(row)
 
     return pd.DataFrame(records_data)
+
 
 def import_data() -> pd.DataFrame:
     """
@@ -91,10 +92,10 @@ def import_data() -> pd.DataFrame:
         data = response.json()
         df = create_dataframe(data)
         return df
-            
+
     else:
         return print('Error:', response.status_code)
-    
+
 
 def pie(title, dataframe, x, y):
     fig = px.pie(dataframe, values=x, names=y, title=title)
@@ -113,6 +114,7 @@ def validate_email(email):
         return True
     else:
         return False
+
 
 def validate_username(user):
     """
