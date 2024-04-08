@@ -67,7 +67,7 @@ def summary_page():
     with div2:
         st.header("Bar Chart")
         def bar(title, dataframe, x, y):
-            df = dataframe.groupby(x)[y].sum().reset_index().sort_values(by=y, ascending=False)
+            df = dataframe.groupby(x)[y].sum().reset_index().sort_values(by=y, ascending=True)
             fig = px.bar(df, x=x, y=y, width=500, height=500)
             #fig.update_traces(textposition='inside', textinfo='label')
             fig.update_layout(showlegend=False)
@@ -118,7 +118,7 @@ def categories_page():
         'End Date',
         value=datetime.now().date()
     )
-    income_f = income.query('Date <= @end_date')
+    income_f = income.query('Date >= @start_date & Date <= @end_date')
 
     expences_f = expences.query(
         'Category == @category & PayMethod == @pay_method & Date >= @start_date & Date <= @end_date'
@@ -152,21 +152,21 @@ st.sidebar.image("data/images/finapp.png",caption="Personal Finance Dashboard")
 #summary_page()
 #categories_page(income, expences)
 
+def main():
+    with st.sidebar:
+        selected = option_menu(None, ["Summary", "Categories"], 
+        icons=['house', "list-task"], 
+        menu_icon="cast", default_index=0, orientation="vertical",
+        styles={
+            "container": {"padding": "sidebar", "background-color": "#fafafa"},
+            "icon": {"color": "black", "font-size": "15px"}, 
+            "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "##1f66bd"},
+            "nav-link-selected": {"background-color": "#1f66bd"},
+        }
+        )
+    if selected == "Summary":
+        summary_page()
+    elif selected == "Categories":
+        categories_page()
 
-with st.sidebar:
-    selected = option_menu(None, ["Summary", "Categories"], 
-    icons=['house', "list-task"], 
-    menu_icon="cast", default_index=0, orientation="vertical",
-    styles={
-        "container": {"padding": "sidebar", "background-color": "#fafafa"},
-        "icon": {"color": "black", "font-size": "15px"}, 
-        "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "##1f66bd"},
-        "nav-link-selected": {"background-color": "#1f66bd"},
-    }
-    )
-if selected == "Summary":
-    summary_page()
-elif selected == "Categories":
-    categories_page()
-
-st.sidebar.write('<p>Made with ❤️ by <br> @DanielGuzman <br> @JuliethAlvarado </p>', unsafe_allow_html=True, )
+    st.sidebar.write('<p>Made with ❤️ by <br> @DanielGuzman <br> @JuliethAlvarado </p>', unsafe_allow_html=True, )
