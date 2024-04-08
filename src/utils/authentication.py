@@ -25,7 +25,6 @@ conn = libsql.connect(NAME, sync_url=URL, auth_token=TOKEN)
 conn.sync()
 users, passwords, emails, names = users_data(conn)
 
-#st.set_page_config(page_title="Authentication", page_icon="💳", layout="wide")
 # Log in
 
 credentials = {'usernames': {users[i]: {'email': emails[i], 

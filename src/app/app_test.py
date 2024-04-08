@@ -24,42 +24,43 @@ from src.app.tabs import summary_page, categories_page
 load_dotenv()
 
 today = datetime.now()
-
-# import the data to a dataframe
-data = import_data().dropna()
-data['Date'] = data['Date'].astype('datetime64[ns]')
-income = data[data['Category'] == 'Income']
-expenses = data[data['Category'] != 'Income']
-expenses['Month'] = expenses['Date'].dt.strftime('%b')
-
-# Page settings
 st.set_page_config(page_title="FinApp", page_icon="💳", layout="wide")
-st.write("# Expense Management",)
 
-# Tabs navigation
-tab1, tab2, tab3 = st.tabs(['Sumary', 'By Category', 'Debts'])
+def main():
+# import the data to a dataframe
+    data = import_data().dropna()
+    data['Date'] = data['Date'].astype('datetime64[ns]')
+    income = data[data['Category'] == 'Income']
+    expenses = data[data['Category'] != 'Income']
+    expenses['Month'] = expenses['Date'].dt.strftime('%b')
 
-with tab1:
-    summary_page(expenses, income)
-with tab2:
-    categories_page(expenses, income)
+    # Page settings
+    st.write("# Expense Management",)
 
-st.sidebar.image("data/images/finapp.png",caption="Personal Finance Dashboard")
+    # Tabs navigation
+    tab1, tab2, tab3 = st.tabs(['Sumary', 'By Category', 'Debts'])
 
-with st.sidebar:
-    selected = option_menu(None, ["Summary", "Categories"],
-    icons=['house', "list-task"],
-    menu_icon="cast", default_index=0, orientation="vertical",
-    styles={
-        "container": {"padding": "sidebar", "background-color": "#fafafa"},
-        "icon": {"color": "black", "font-size": "15px"},
-        "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "##1f66bd"},
-        "nav-link-selected": {"background-color": "#1f66bd"},
-    }
-    )
-if selected == "Summary":
-    summary_page(expenses, income)
-elif selected == "Categories":
-    categories_page(expenses, income)
+    with tab1:
+        summary_page(expenses, income)
+    with tab2:
+        categories_page(expenses, income)
 
-st.sidebar.write('<p>Made with ❤️ by <br> @DanielGuzman <br> @JuliethAlvarado </p>', unsafe_allow_html=True, )
+    st.sidebar.image("data/images/finapp.png",caption="Personal Finance Dashboard")
+
+    with st.sidebar:
+        selected = option_menu(None, ["Summary", "Categories"],
+        icons=['house', "list-task"],
+        menu_icon="cast", default_index=0, orientation="vertical",
+        styles={
+            "container": {"padding": "sidebar", "background-color": "#fafafa"},
+            "icon": {"color": "black", "font-size": "15px"},
+            "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "##1f66bd"},
+            "nav-link-selected": {"background-color": "#1f66bd"},
+        }
+        )
+    if selected == "Summary":
+        summary_page(expenses, income)
+    elif selected == "Categories":
+        categories_page(expenses, income)
+
+    st.sidebar.write('<p>Made with ❤️ by <br> @DanielGuzman <br> @JuliethAlvarado </p>', unsafe_allow_html=True, )
