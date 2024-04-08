@@ -24,7 +24,7 @@ from src.app.tabs import summary_page, categories_page
 load_dotenv()
 
 today = datetime.now()
-st.set_page_config(page_title="FinApp", page_icon="💳", layout="wide")
+#st.set_page_config(page_title="FinApp", page_icon="💳", layout="wide")
 
 def main():
 # import the data to a dataframe
@@ -37,6 +37,7 @@ def main():
     # Page settings
     st.write("# Expense Management",)
 
+    st.sidebar.image("data/images/finapp.png",caption="Personal Finance Dashboard")
     # Tabs navigation
     tab1, tab2, tab3 = st.tabs(['Sumary', 'By Category', 'Debts'])
 
@@ -45,7 +46,6 @@ def main():
     with tab2:
         categories_page(expenses, income)
 
-    st.sidebar.image("data/images/finapp.png",caption="Personal Finance Dashboard")
 
     with st.sidebar:
         selected = option_menu(None, ["Summary", "Categories"],

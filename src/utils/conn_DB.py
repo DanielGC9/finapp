@@ -1,15 +1,6 @@
 
 import pandas as pd
-import streamlit as st
-import libsql_experimental as libsql
-import os
 
-TOKEN = os.environ.get('TOKEN_DB')
-URL = os.environ.get('URL_DB')
-NAME = os.environ.get('NAME_DB')
-
-conn = libsql.connect(NAME, sync_url=URL, auth_token=TOKEN)
-conn.sync()
 
 def new_user(conn, username, password, email, name, lastName):
     query = f'''INSERT INTO users (username, password, email, name, lastName)

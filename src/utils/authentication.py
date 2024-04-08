@@ -23,12 +23,13 @@ NAME = os.environ.get('NAME_DB')
 
 conn = libsql.connect(NAME, sync_url=URL, auth_token=TOKEN)
 conn.sync()
+
 users, passwords, emails, names = users_data(conn)
 
 # Log in
 
 credentials = {'usernames': {users[i]: {'email': emails[i], 
-                                        'failed_login_attempts': 3,
+                                        'failed_login_attempts': 10,
                                         'logged_in': False,
                                         'name': names[i],
                                         'password': passwords[i]} for i in range(len(users))}}
