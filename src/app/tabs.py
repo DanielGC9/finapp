@@ -85,16 +85,9 @@ def summary_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
 
     pivoted_data = pivoted_data.reindex(sorted(pivoted_data.columns), axis=1)
 
-    heatmap_colors = ['#a0e0d9', '#72b1aa', '#46847e', '#165954', '#00322e']
     # heatmap_colors = ['#a0e0d9', '#f9d38b', '#d1ac4f', '#f99893', '#ef516b']
-    my_cmap = ListedColormap(heatmap_colors)
+    heatmap_colors = ['#a0e0d9', '#72b1aa', '#46847e', '#165954', '#00322e']
     limits = [0, 50000, 100000, 200000, 500000, 50e6]
-    my_norm = BoundaryNorm(limits, ncolors=len(heatmap_colors))
-
-    cell_size = 35
-    row_title_width = 200
-    width = cell_size*len(pivoted_data.columns)
-    height = cell_size*len(pivoted_data.index)
 
     colorscale = discrete_colorscale(limits, heatmap_colors)
 
@@ -113,6 +106,23 @@ def summary_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
                       y0=0.5 + i,
                       x1=len(pivoted_data.columns) - 0.5,
                       y1=0.5 + i, line=dict(color="white", width=2))
+    fig.update_coloraxes(
+        showscale=False,
+        colorscale=[(0.0, '#a0e0d9'),
+                    (0.01, '#a0e0d9'),
+                    (0.01, '#72b1aa'),
+                    (0.02, '#72b1aa'),
+                    (0.02, '#46847e'),
+                    (0.04, '#46847e'),
+                    (0.04, '#165954'),
+                    (0.1, '#165954'),
+                    (0.1, '#00322e'),
+                    (1.0, '#00322e'),],
+                    )
+    fig.update_layout(xaxis=dict(tickmode='linear', dtick=1), yaxis_title=None, xaxis_title=None)
+    fig.update_xaxes(showgrid=False, zeroline=False)
+    fig.update_yaxes(showgrid=False, zeroline=False)
+
     st.plotly_chart(fig, use_container_width=True, theme=None)
 
     st.header("Table")
