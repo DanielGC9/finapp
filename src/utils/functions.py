@@ -120,7 +120,7 @@ def validate_username(user):
     """
     This function validates if an username is valid
     """
-    patern = r'^[a-zA-Z0-9._+-]+$'
+    patern = r'^[a-zA-Z0-9._+-]{6,}$'
 
     if re.match(patern, user):
         return True

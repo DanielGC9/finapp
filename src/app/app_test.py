@@ -46,7 +46,6 @@ with tab2:
 
 st.sidebar.image("data/images/finapp.png",caption="Personal Finance Dashboard")
 
-
 with st.sidebar:
     selected = option_menu(None, ["Summary", "Categories"],
     icons=['house', "list-task"],
