@@ -81,6 +81,7 @@ with st.container():
     if username in users:
         if authentication_status:
             with st.sidebar:
+                st.sidebar.image("data/images/finapp.png", caption="Personal Finance Dashboard")
                 st.subheader(f'Welcome {name}')
                 authenticator.logout(':green[Logout] :wink:')
             main()
