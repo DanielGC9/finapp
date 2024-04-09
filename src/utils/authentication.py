@@ -25,8 +25,6 @@ conn = libsql.connect(NAME, sync_url=URL, auth_token=TOKEN)
 conn.sync()
 users, passwords, emails, names = users_data(conn)
 
-#st.set_page_config(page_title="Authentication", page_icon="💳", layout="wide")
-# Log in
 
 credentials = {'usernames': {users[i]: {'email': emails[i], 
                                         'failed_login_attempts': 3,
@@ -53,7 +51,7 @@ with st.container():
             name = st.text_input(':blue[Name] :sunglasses:', placeholder='Enter your name',)
             lastName = st.text_input(':blue[Last Name] :sunglasses:', placeholder='Enter your last name')
             username = st.text_input(':blue[Username] :sunglasses:', placeholder='Enter your username', 
-                                        help="Must be at least 6 characters long, and you can use '.', '_', and '-'")
+                                        help="Only use lowercase, and use '.', '_', and '-'")
             mail = st.text_input(':blue[Email] :sunglasses:', placeholder='Enter your email')
             password1 = st.text_input(':blue[Password] :sunglasses:', type='password', placeholder='Enter your password')
             password2 = st.text_input(':blue[Confirm Password] :sunglasses:',  type='password', placeholder='Confirm your password')
