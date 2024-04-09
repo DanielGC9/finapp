@@ -1,26 +1,18 @@
-CREATE TABLE users (
-    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(500) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    name VARCHAR(50) NOT NULL,
-    lastName VARCHAR(50) NOT NULL,
-    createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    deletedAt DATETIME DEFAULT NULL
-);
+"""
+Expenses table
+"""
 
 CREATE TABLE expenses (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     userId INTEGER NOT NULL,
-    description VARCHAR(100) NOT NULL,
+    expense VARCHAR(500),
+    category VARCHAR(100) NOT NULL,
     amount INTEGER NOT NULL,
-    date DATETIME NOT NULL,
+    description VARCHAR(500),
+    paymentMethod VARCHAR(100) NOT NULL,
+    date DATETIME,
     createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     deletedAt DATETIME DEFAULT NULL,
     FOREIGN KEY (userId) REFERENCES users(id)
-)
-
-#create table from csv file
-.import src/data/expenses.csv expenses
+);
