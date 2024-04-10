@@ -19,14 +19,14 @@ from streamlit_option_menu import option_menu
 sys.path.append('.')
 from src.utils.functions import import_data, pie
 from dotenv import load_dotenv
-from src.app.tabs import summary_page, categories_page
+from src.app.data_entry import data_entry
+from src.app.home import home
 
 load_dotenv()
 
-today = datetime.now()
-st.set_page_config(page_title="FinApp", page_icon="💳", layout="wide")
 
 def main():
+    # DATA
     # import the data to a dataframe
     data = import_data().dropna()
     data['Date'] = data['Date'].astype('datetime64[ns]')
@@ -34,33 +34,24 @@ def main():
     expenses = data[data['Category'] != 'Income']
     expenses['Month'] = expenses['Date'].dt.strftime('%b')
 
-    # Page settings
-    st.write("# Expense Management",)
+    today = datetime.now()
 
-    # Tabs navigation
-    tab1, tab2, tab3 = st.tabs(['Sumary', 'By Category', 'Debts'])
+    # PAGE
 
-    with tab1:
-        summary_page(expenses, income)
-    with tab2:
-        categories_page(expenses, income)
-
-
-    # with st.sidebar:
-    #     selected = option_menu(None, ["Summary", "Categories"],
-    #     icons=['house', "list-task"],
-    #     menu_icon="cast", default_index=0, orientation="vertical",
-    #     styles={
-    #         "container": {"padding": "sidebar", "background-color": "#fafafa"},
-    #         "icon": {"color": "black", "font-size": "15px"},
-    #         "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "##1f66bd"},
-    #         "nav-link-selected": {"background-color": "#1f66bd"},
-    #     }
-    #     )
-    # if selected == "Summary":
-    #     summary_page(expenses, income)
-    # elif selected == "Categories":
-    #     categories_page(expenses, income)
+    with st.sidebar:
+        selected = option_menu(None, ["Home", "Data Entry"],
+                               icons=['house', "list-task"],
+                               menu_icon="cast", default_index=0, orientation="vertical",
+                               styles={
+                                   "container": {"padding": "sidebar", "background-color": "#fafafa"},
+                                   "icon": {"color": "black", "font-size": "15px"},
+                                   "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "##1f66bd"},
+                                   "nav-link-selected": {"background-color": "#1f66bd"},
+                                   })
+    if selected == 'Home':
+        home(expenses, income)
+    elif selected == 'Data Entry':
+        data_entry(expenses)
 
     st.sidebar.markdown("""
                         <style>

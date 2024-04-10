@@ -12,6 +12,7 @@ sys.path.append('.')
 from src.app.app_test import main
 
 
+st.set_page_config(page_title="FinApp", page_icon="💳", layout="wide")
 def hash_password(password):
    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
