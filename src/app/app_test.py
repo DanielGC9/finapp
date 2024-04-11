@@ -50,7 +50,7 @@ def main():
     with st.sidebar:
         selected = option_menu(None, ["Summary", "Categories"],
         icons=['house', "list-task"],
-        menu_icon="cast", default_index=0, orientation="vertical",
+        menu_icon="cast", default_index=0, orientation="horizontal",
         styles={
             "container": {"padding": "sidebar", "background-color": "#fafafa"},
             "icon": {"color": "black", "font-size": "15px"},
@@ -64,3 +64,5 @@ def main():
         categories_page(expenses, income)
 
     st.sidebar.write('<p>Made with ❤️ by <br> @DanielGuzman <br> @JuliethAlvarado </p>', unsafe_allow_html=True, )
+
+main()
