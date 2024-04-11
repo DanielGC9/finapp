@@ -16,7 +16,6 @@ load_dotenv()
 NAME = os.environ.get('COOKIE_NAME')
 KEY = os.environ.get('COOKIE_PW')
 
-
 data = DB()
 
 st.set_page_config(page_title="FinApp", page_icon="💳",layout='wide')#, initial_sidebar_state="collapsed"

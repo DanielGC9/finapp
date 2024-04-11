@@ -2,7 +2,7 @@
     This module contains the main logic for the app
     using Streamlit.
 
-    Created by: @DanielGuzman
+    Created by: @DanielGuzman and @JuliethAlvarado
     Date: 2023-06-08
     Version: 1.0.0
 """
@@ -19,50 +19,53 @@ from streamlit_option_menu import option_menu
 sys.path.append('.')
 from src.utils.functions import import_data, pie
 from dotenv import load_dotenv
-from src.app.tabs import summary_page, categories_page
+from src.app.data_entry import data_entry
+from src.app.home import home
 
 load_dotenv()
 
-today = datetime.now()
-#st.set_page_config(page_title="FinApp", page_icon="💳", layout="wide")
 
 def main():
-# import the data to a dataframe
+    # DATA
+    # import the data to a dataframe
     data = import_data().dropna()
     data['Date'] = data['Date'].astype('datetime64[ns]')
     income = data[data['Category'] == 'Income']
     expenses = data[data['Category'] != 'Income']
     expenses['Month'] = expenses['Date'].dt.strftime('%b')
 
-    # Page settings
-    st.write("# Expense Management",)
+    today = datetime.now()
 
-    st.sidebar.image("data/images/finapp.png",caption="Personal Finance Dashboard")
-    # Tabs navigation
-    tab1, tab2, tab3 = st.tabs(['Sumary', 'By Category', 'Debts'])
-
-    with tab1:
-        summary_page(expenses, income)
-    with tab2:
-        categories_page(expenses, income)
-
+    # PAGE
 
     with st.sidebar:
-        selected = option_menu(None, ["Summary", "Categories"],
-        icons=['house', "list-task"],
-        menu_icon="cast", default_index=0, orientation="horizontal",
-        styles={
-            "container": {"padding": "sidebar", "background-color": "#fafafa"},
-            "icon": {"color": "black", "font-size": "15px"},
-            "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "##1f66bd"},
-            "nav-link-selected": {"background-color": "#1f66bd"},
-        }
-        )
-    if selected == "Summary":
-        summary_page(expenses, income)
-    elif selected == "Categories":
-        categories_page(expenses, income)
 
-    st.sidebar.write('<p>Made with ❤️ by <br> @DanielGuzman <br> @JuliethAlvarado </p>', unsafe_allow_html=True, )
+        selected = option_menu(None, ["Home", "Data Entry"],
+                               icons=['house', "list-task"],
+                               menu_icon="cast", default_index=0, orientation="vertical",
+                               styles={
+                                   "container": {"padding": "sidebar", "background-color": "#fafafa"},
+                                   "icon": {"color": "black", "font-size": "15px"},
+                                   "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "##1f66bd"},
+                                   "nav-link-selected": {"background-color": "#1f66bd"},
+                                   })
+    if selected == 'Home':
+        home(expenses, income)
+    elif selected == 'Data Entry':
+        data_entry(expenses)
+
+    st.sidebar.markdown("""
+                        <style>
+                        .footer {
+                        position: absolute;
+                        bottom: 10px;
+                        left: 0;
+                        width: 100%;
+                        text-align: center;
+                        font-size: smaller;
+                        }
+                        </style>
+                        """, unsafe_allow_html=True)
+    st.sidebar.write('<p style="font-size: smaller;">Made with ❤️ by <br> @DanielGuzman and @JuliethAlvarado </small>', unsafe_allow_html=True)
 
 main()

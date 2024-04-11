@@ -2,13 +2,31 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from streamlit_extras.metric_cards import style_metric_cards
-from matplotlib.colors import BoundaryNorm, ListedColormap
 import plotly.express as px
 from datetime import datetime
 from src.utils.graphics_visuals import discrete_colorscale
 from src.utils.graphics_visuals import pie, bar_1, bar_2
 
-def summary_tab(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
+
+
+def summary_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
+    col1, col2 = st.columns(2)
+    with col1:
+        start_date = st.date_input(
+            label='Start Date',
+            value=datetime.now().replace(day=1).date(),
+            key='start_date_summ'
+            )
+        
+    with col2:
+        end_date = st.date_input(
+            label='End Date',
+            value=datetime.now().date(),
+            key='end_date_summ'
+        )
+
+    st.markdown("""---""")
+
     col1, col2, col3, col4 = st.columns(4)
 
     col1.metric('Total Records',
@@ -26,13 +44,6 @@ def summary_tab(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
 
     style_metric_cards(background_color='white', border_left_color='#1f66bd')
 
-    st.markdown("""---""")
-
-    st.header("Table")
-    df_show = df_expenses[['expense', 'category', 'paymentMethod', 'amount', 'date']]
-    df_show['date'] = df_show['date'].dt.strftime('%Y-%m-%d')
-    st.dataframe(df_show, use_container_width=True)
-    st.markdown("""---""")
     # Pie chart and Bar chart by category
     div1, div2 = st.columns(2)
     with div1:
@@ -119,33 +130,42 @@ def summary_tab(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
 def categories_tab(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
     st.write("# 💰 Categories")
 
-    st.sidebar.header('Filters')
-    category = st.sidebar.multiselect(
-        'Select Category',
-        options=np.append(['All'], df_expenses['category'].unique()),
-        default=['All']
-    )
+    col1, col2 = st.columns(2)
+    with col1:
+        start_date = st.date_input(
+            label='Start Date',
+            value=datetime.now().replace(day=1).date(),
+            key='start_date_cat'
+            )
+        
+    with col2:
+        end_date = st.date_input(
+            label='End Date',
+            value=datetime.now().date(),
+            key='end_date_cat'
+        )
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        category = st.multiselect(
+            'Select Category',
+            options=np.append(['All'], df_expenses['category'].unique()),
+            default=['All']
+        )
 
-    if ['All'] == category:
-        category = list(df_expenses['category'].unique())
+        if ['All'] == category:
+            category = list(df_expenses['category'].unique())
 
-    pay_method = st.sidebar.multiselect(
-        'Select Pay Method',
-        options=np.append(['All'], df_expenses['paymentMethod'].unique()),
-        default=['All']
-    )
-    if ['All'] == pay_method:
-        pay_method = list(df_expenses['paymentMethod'].unique())
+    with col2:
+        pay_method = st.multiselect(
+            'Select Payment Method',
+            options=np.append(['All'], df_expenses['paymentMethod'].unique()),
+            default=['All']
+        )
+        if ['All'] == pay_method:
+            pay_method = list(df_expenses['paymentMethod'].unique())
+    st.markdown("""---""")
 
-    start_date = st.sidebar.date_input(
-        'Start Date',
-        value=datetime.now().replace(day=1).date(),
-    )
-
-    end_date = st.sidebar.date_input(
-        'End Date',
-        value=datetime.now().date()
-    )
     income_f = df_income.query('date <= @end_date')
 
     expenses_f = df_expenses.query(
