@@ -11,9 +11,8 @@ from src.app.tabs import summary_tab, categories_tab
 dataBase = DB()
 
 
-
-def summary_page(name ,userId):
-# import the data to a dataframe
+def summary_page(name, userId):
+    # import the data to a dataframe
     st.subheader(f"Hola {name}, este es el resumen de tus gastos")
     data = dataBase.expenses_user(userId)#.dropna()
     data['date'] = data['date'].astype('datetime64[ns]')

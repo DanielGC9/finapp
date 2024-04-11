@@ -8,8 +8,7 @@ from src.utils.graphics_visuals import discrete_colorscale
 from src.utils.graphics_visuals import pie, bar_1, bar_2
 
 
-
-def summary_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
+def summary_tab(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
     col1, col2 = st.columns(2)
     with col1:
         start_date = st.date_input(
@@ -17,7 +16,7 @@ def summary_page(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
             value=datetime.now().replace(day=1).date(),
             key='start_date_summ'
             )
-        
+
     with col2:
         end_date = st.date_input(
             label='End Date',
@@ -190,5 +189,5 @@ def categories_tab(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
     style_metric_cards(background_color='white', border_left_color='#1f66bd')
 
     st.dataframe(expenses_f, use_container_width=True)
-    
+
     return True

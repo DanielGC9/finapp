@@ -79,8 +79,8 @@ def main(user:list):
 
     if pag == "Home":
         home_page(name)
-    elif pag == "Expenses ":
-        expenses_page(userId)
+    elif pag == "Expenses 🎯":
+        expenses_page(name, userId)
     elif pag == "Summary":
         summary_page(name, userId)
     elif pag == name:
