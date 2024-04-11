@@ -66,3 +66,5 @@ def main():
                         </style>
                         """, unsafe_allow_html=True)
     st.sidebar.write('<p style="font-size: smaller;">Made with ❤️ by <br> @DanielGuzman and @JuliethAlvarado </small>', unsafe_allow_html=True)
+
+main()
