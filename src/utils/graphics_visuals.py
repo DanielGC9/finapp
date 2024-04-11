@@ -19,9 +19,9 @@ def bar_1(title, dataframe, x, y):
 
 
 def bar_2(dataframe, x, y):
-    df = dataframe.groupby([x, 'Category'])[y].sum(
+    df = dataframe.groupby([x, 'category'])[y].sum(
     ).reset_index().sort_values(by=y, ascending=True)
-    fig = px.bar(df, x=y, y=x, color='Category',
+    fig = px.bar(df, x=y, y=x, color='category',
                  width=500, height=500, orientation='h')
     fig.update_layout(showlegend=False)
     return fig

@@ -39,6 +39,7 @@ def main():
     # PAGE
 
     with st.sidebar:
+
         selected = option_menu(None, ["Home", "Data Entry"],
                                icons=['house', "list-task"],
                                menu_icon="cast", default_index=0, orientation="vertical",
