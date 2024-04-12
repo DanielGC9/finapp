@@ -11,12 +11,12 @@ import os
 import sys
 import streamlit as st
 from streamlit_navigation_bar import st_navbar
+from streamlit_extras.add_vertical_space import add_vertical_space
 sys.path.append('.')
-from src.app.pages.home import home_page
 from src.app.pages.expenses import expenses_page
 from src.app.pages.summary import summary_page
+from src.app.pages.payshare import payshare_page
 from src.app.pages.user import user_page
-
 
 
 def main(user:list):
@@ -29,15 +29,20 @@ def main(user:list):
     updatedAt = user[7]
     #st.set_page_config(initial_sidebar_state="collapsed")
 
+    with st.sidebar:
+        st.image("data/images/finapp.png",caption="Finanzas personales",use_column_width=True)
+        st.markdown("---")
+        st.write(f"{name}, es hora de tomar el control! 💪")
+        st.markdown("---")
+        add_vertical_space(20)
 
 
-    st.sidebar.image("data/images/finapp.png",caption="Personal Finance Dashboard",use_column_width=True)
+    parent_dir = os.path.abspath('')
+    logo_path = os.path.join(parent_dir, "data/images/bank.svg")
+    ima = os.path.join(parent_dir, "data/images/expense.svg") 
 
-
-    pages = ["Expenses 🎯", "Summary", name]
-    parent_dir = os.path.dirname(os.path.abspath(__file__))
-    logo_path = os.path.join(parent_dir, "cubes.svg")
-
+    pages = ["Gastos 🧾", "Paga y Comparte 🫂", f"{name} 👤"]
+    
     styles = {
         "nav": {
             "background-color": "#72b1aa",
@@ -49,6 +54,7 @@ def main(user:list):
         },
         "img": {
             "padding-right": "14px",
+            "z-index": "1",
         },
         "span": {
             "color": "white",
@@ -59,6 +65,7 @@ def main(user:list):
             "background-color": "#a0e0d9",
             "font-weight": "normal",
             "padding": "14px",
+
         }
     }
 
@@ -72,18 +79,19 @@ def main(user:list):
     pag = st_navbar(
         pages,
         logo_path=logo_path,
+
         styles=styles,
         options=options,
         adjust=True
-    )
+    )        
 
     if pag == "Home":
-        home_page(name)
-    elif pag == "Expenses 🎯":
-        expenses_page(name, userId)
-    elif pag == "Summary":
         summary_page(name, userId)
-    elif pag == name:
+    elif pag == "Gastos 🧾":
+        expenses_page(name, userId)
+    elif pag == "Paga y Comparte 🫂":
+        payshare_page(name)
+    elif pag == f"{name} 👤":
         user_page(name)
 
 
