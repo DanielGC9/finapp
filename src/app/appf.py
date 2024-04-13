@@ -38,33 +38,44 @@ def main(user:list):
 
 
     parent_dir = os.path.abspath('')
-    logo_path = os.path.join(parent_dir, "data/images/bank.svg")
+    logo_path = os.path.join(parent_dir, "data/images/b1.svg")
     ima = os.path.join(parent_dir, "data/images/expense.svg") 
 
     pages = ["Gastos 🧾", "Paga y Comparte 🫂", f"{name} 👤"]
     
     styles = {
         "nav": {
-            "background-color": "#72b1aa",
+            "background-color": "#2d2d2d",
             "justify-content": "Center",
             "position": "relative",
-            "top": "-5px",
+            "top": "0px",
             "z-index": "0",
             "width": "100%",
         },
         "img": {
-            "padding-right": "14px",
-            "z-index": "1",
+            "height": "50px",
+            "width": "50px",
+            "padding-right": "50px",
+            "color": "#2d2d2d",
+            "position": "relative",
+            "animation": "mymove",
+            "animation-direction": "top",
+            "animation-duration": "1s"
+            
         },
         "span": {
             "color": "white",
             "padding": "14px",
+            "border-radius": "20px 20px 0px 0px",
+            "border": "1px solid #ffffff"
         },
         "active": {
             "color": "var(--text-color)",
-            "background-color": "#a0e0d9",
+            "background-color": "#c6ede8",
             "font-weight": "normal",
             "padding": "14px",
+            "border-radius": "20px 20px 0px 0px",
+            "border": "1px solid #ffffff",
 
         }
     }
@@ -92,7 +103,7 @@ def main(user:list):
     elif pag == "Paga y Comparte 🫂":
         payshare_page(name)
     elif pag == f"{name} 👤":
-        user_page(name)
+        user_page(name, userId)
 
 
 if __name__ == "__main__":

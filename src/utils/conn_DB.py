@@ -1,6 +1,8 @@
-import os
+import sys
+from duckdb import query
 import pandas as pd
-from connection import conn
+sys.path.append('.')
+from src.utils.connection import conn
 
 
 class DB:
@@ -40,11 +42,11 @@ class DB:
         return users_list, password_list, emails_list, names_list
 
 
-    def new_expense(self, userId, expense, category, amount, description, paymentMethod, date):
+    def new_expense(self, userId, expense, category, amount, description, paymentMethod, date, thisMonth):
         query = f'''
-        INSERT INTO expenses (userId, expense, category, amount, description, paymentMethod, date)
+        INSERT INTO expenses (userId, expense, category, amount, description, paymentMethod, date, thisMonth)
                     VALUES ('{userId}', '{expense}', '{category}', '{amount}', '{description}', 
-                    '{paymentMethod}', '{date}');
+                    '{paymentMethod}', '{date}', '{thisMonth}');
                 '''
 
         self.conn.execute(query)
@@ -59,14 +61,69 @@ class DB:
         columns = [description[0] for description in table1.description]
         df = pd.DataFrame(table, columns=columns)
         return df
+    
+    def expenses_all(self):
+        query = '''SELECT * FROM expenses'''
+        table1 = self.conn.execute(query)
+        table = table1.fetchall()
+        columns = [description[0] for description in table1.description]
+        df = pd.DataFrame(table, columns=columns)
+        return df
+    
+    def drop_table(self, table):
+        query = f'''DROP TABLE {table}'''
+        self.conn.execute(query)
+        self.conn.commit()
+        self.conn.sync()
+
+    def new_table(self):
+        query='''
+        CREATE TABLE categories(
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            userId INTEGER NOT NULL,
+            category VARCHAR(500) NOT NULL,
+            createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+            deletedAt DATETIME DEFAULT NULL,
+            FOREIGN KEY (userId) REFERENCES users(id)
+        );
+        '''
+        self.conn.execute(query)
+        self.conn.commit()
+        self.conn.sync()
+
+    def add_categories(self, userId, category):
+        query = f'''
+        INSERT INTO categories (userId, category)
+                    VALUES ('{userId}', '{category}');
+                '''
+        self.conn.execute(query)
+        self.conn.commit()
+        self.conn.sync()
+
+    def update_categories(self, userId, category, updatedAt):
+        query = f'''
+        UPDATE categories
+        SET category = '{category}', updatedAt = '{updatedAt}'
+        WHERE userId = {userId}
+        '''
+        self.conn.execute(query)
+        self.conn.commit()
+        self.conn.sync()
+
+    def categories_user(self, userId):
+        query = f'''
+            SELECT category 
+            FROM categories 
+            WHERE userId = {userId}
+        '''
+        table1 = self.conn.execute(query)
+        if table1.fetchall() == []:
+            return [],''
+        table = table1.fetchall()
+        lista = table[0][0].split(",")
+        return lista,table[0][0]
+
+#database = DB()
 
 
-# for i, row in data.iterrows():
-#     new_expense(conn, 
-#                 userId=row['userId'], 
-#                 expense=row['Name'], 
-#                 category=row['Category'], 
-#                 amount=row['Amount'], 
-#                 description=row['description'], 
-#                 paymentMethod=row['PayMethod'],
-#                 date=row['Date'])

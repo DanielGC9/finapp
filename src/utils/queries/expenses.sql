@@ -10,6 +10,7 @@ CREATE TABLE expenses (
     amount INTEGER NOT NULL,
     description VARCHAR(500),
     paymentMethod VARCHAR(100) NOT NULL,
+    thisMonth INTEGER NOT NULL,
     date DATETIME,
     createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
