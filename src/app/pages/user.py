@@ -37,9 +37,12 @@ def user_page(name, userId):
                             placeholder='comida, trasnporte')
         cat = cat.replace(" ", "")
         st.write(f"Categorías:{cat}")
+
         if st.button("Actualizar categorías"):
-            db.update_categories(userId, cat, datetime.now())
-            st.success("Categorías actualizadas")
+            with st.spinner('Wait for it...'):
+                time.sleep(1)
+            #db.update_categories(userId, cat, datetime.now())
+            st.toast("Categorías actualizadas", icon="🚀")
             time.sleep(3)
             st.rerun()
 

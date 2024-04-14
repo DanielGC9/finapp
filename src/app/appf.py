@@ -48,6 +48,7 @@ def main(user:list):
             "background-color": "#2d2d2d",
             "justify-content": "Center",
             "position": "relative",
+            "padding": "14px",
             "top": "0px",
             "z-index": "0",
             "width": "100%",
@@ -58,20 +59,24 @@ def main(user:list):
             "padding-right": "50px",
             "color": "#2d2d2d",
             "position": "relative",
+            "top": "-15px",
+            "right": "-50px",
             "animation": "mymove",
             "animation-direction": "top",
             "animation-duration": "1s"
             
         },
         "span": {
-            "color": "white",
-            "padding": "14px",
+            "color": "#ffffff",
+            "padding": "10px",
+            "position": "relative",
+            "top": "-10px",
             "border-radius": "20px 20px 0px 0px",
             "border": "1px solid #ffffff"
         },
         "active": {
             "color": "var(--text-color)",
-            "background-color": "#c6ede8",
+            "background-color": "#ffffff",
             "font-weight": "normal",
             "padding": "14px",
             "border-radius": "20px 20px 0px 0px",

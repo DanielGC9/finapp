@@ -9,7 +9,7 @@ from src.utils.graphics_visuals import pie, bar_1, bar_2
 
 
 def summary_tab(df_expenses: pd.DataFrame, df_income: pd.DataFrame):
-    col1, col2 = st.columns(2)
+    col1, col2 , _, _, _ = st.columns(5)
     with col1:
         start_date = st.date_input(
             label='Start Date',

@@ -51,22 +51,23 @@ def expenses_page(name, userId):
                          horizontal=True)
         
         submit = st.form_submit_button('Agregar')
+    
+    if submit:
 
         if month == '🔼:blue[ Este mes]':
-            st.info('Movimiento agregado al mes actual')
+            st.toast('Movimiento agregado al mes actual', icon="✅")
             current_month = 1
         elif month == '⏪:blue[ Mes pasado]':
-            st.info('Movimiento agregado al mes anterior')
+            st.toast('Movimiento agregado al mes anterior', icon="✅")
             current_month = 0
         else:
-            st.info('Movimiento agregado al mes siguiente')
+            st.toast('Movimiento agregado al mes siguiente', icon="✅")
             current_month = 2
             
         
         #current_month = st.checkbox(label='Este gasto corresponde a este mes',value=True)
 
-    if submit:
-        st.success('Gasto agregado con exito!')
+        st.toast('Movimiento agregado con exito!', icon="✅")
         st.write(category, date, expense, amount, payment_method, current_month)
-        db.new_expense(userId, expense, category, amount, description, payment_method, date, current_month)
+        #db.new_expense(userId, expense, category, amount, description, payment_method, date, current_month)
         st.markdown("---")
