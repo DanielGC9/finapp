@@ -22,7 +22,7 @@ def summary_page(name, userId):
     expenses['Month'] = expenses['date'].dt.strftime('%b')
 
     if len(data) == 0:
-        st.info(f"uuff, parece que aún no has registrado gastos 😓. Haz click en el botón para empezar")
+        st.info(f"Parece que aún no has registrado gastos 😓. Haz click en el botón para empezar")
         if st.button("¡Agrega tus gastos!"):
             expenses_page(name, userId)
     else:
