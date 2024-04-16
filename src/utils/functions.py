@@ -126,4 +126,10 @@ def validate_username(user):
         return True
     else:
         return False
-    
+
+def list_to_string(lista:list):
+    """
+    This function converts a list into a string to update in database
+    return str
+    """
+    return str(lista).replace("[", "").replace("]", "").replace("'", "")

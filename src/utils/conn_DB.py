@@ -1,6 +1,6 @@
 import sys
-from duckdb import query
 import pandas as pd
+from datetime import datetime
 sys.path.append('.')
 from src.utils.connection import conn
 
@@ -19,8 +19,8 @@ class DB:
 
     def info_user(self, username):
         query = f'''
-        SELECT * 
-        FROM users 
+        SELECT *
+        FROM users
         WHERE username = '{username}'
         '''
         table1 = self.conn.execute(query)
@@ -29,7 +29,7 @@ class DB:
 
 
     def users_data(self):
-        query = '''SELECT username, password, email, name 
+        query = '''SELECT username, password, email, name
                     FROM users'''
         table1 = self.conn.execute(query)
         table = table1.fetchall()
@@ -45,7 +45,7 @@ class DB:
     def new_expense(self, userId, expense, category, amount, description, paymentMethod, date, thisMonth):
         query = f'''
         INSERT INTO expenses (userId, expense, category, amount, description, paymentMethod, date, thisMonth)
-                    VALUES ('{userId}', '{expense}', '{category}', '{amount}', '{description}', 
+                    VALUES ('{userId}', '{expense}', '{category}', '{amount}', '{description}',
                     '{paymentMethod}', '{date}', '{thisMonth}');
                 '''
 
@@ -61,7 +61,7 @@ class DB:
         columns = [description[0] for description in table1.description]
         df = pd.DataFrame(table, columns=columns)
         return df
-    
+
     def expenses_all(self):
         query = '''SELECT * FROM expenses'''
         table1 = self.conn.execute(query)
@@ -69,7 +69,7 @@ class DB:
         columns = [description[0] for description in table1.description]
         df = pd.DataFrame(table, columns=columns)
         return df
-    
+
     def drop_table(self, table):
         query = f'''DROP TABLE {table}'''
         self.conn.execute(query)
@@ -101,10 +101,10 @@ class DB:
         self.conn.commit()
         self.conn.sync()
 
-    def update_categories(self, userId, category, updatedAt):
+    def update_categories(self, userId, categories, updatedAt):
         query = f'''
         UPDATE categories
-        SET category = '{category}', updatedAt = '{updatedAt}'
+        SET category = '{categories}', updatedAt = '{updatedAt}'
         WHERE userId = {userId}
         '''
         self.conn.execute(query)
@@ -113,17 +113,20 @@ class DB:
 
     def categories_user(self, userId):
         query = f'''
-            SELECT category 
-            FROM categories 
+            SELECT category
+            FROM categories
             WHERE userId = {userId}
         '''
         table1 = self.conn.execute(query)
         if table1.fetchall() == []:
             return [],''
         table = table1.fetchall()
-        lista = table[0][0].split(",")
-        return lista,table[0][0]
+        lista = table[0][0].split(", ")
+        return lista
 
-#database = DB()
+# db = DB()
 
-
+# db.categories_user(1)
+# updated_list = str(["🍛 Alimentación", "🏠 Hogar"])
+# print(updated_list)
+# db.update_categories(1, updated_list, datetime.now())
