@@ -21,112 +21,59 @@ def user_page(name, userId):
         st.subheader(f"{name}, empecemos definiendo las categorías para tus gastos 🖋")
         st.markdown("Selecciona las categorías que mejor se ajusten a ti.")
 
-        selected_categories = []
-
-        c1, c2 = st.columns([0.7,0.3])
-        with c1:
-            st.subheader("Categorías disponibles:")
-            col1, col2, col3, col4 = st.columns(4)
-
-            i = 0
-            for col in [col1, col2, col3, col4]:
-                j = 0
-                while j < 3:
-                    cat=default_categories[i]
-                    key = cat+str(i)
-                    selected_categories.append(col.toggle(cat, value=True, key=key))
-                    i+=1
-                    j+=1
-
-        # Use a mask to get the categories that the user selected
-        mask = [x for x, selected in zip(default_categories, selected_categories) if selected]
-        with c2:
-            with st.container(border=True):
-                st.subheader('Categorías seleccionadas:')
-                col5, col6 = st.columns(2)
-                k=0
-                for cat in mask:
-                    if k < 6:
-                        col5.write(cat)
-                        k+=1
-                    else:
-                        col6.write(cat)
-
-        m = st.markdown("""
-        <style>
-        div.stButton > button:first-child {
-            background-color: #ffffff;
-            color:;
-        }
-        div.stButton > button:hover {
-            background-color: #00ff00;
-            color:#ff0000;
-            }
-        </style>""", unsafe_allow_html=True)
-        with col2:
-            add_vertical_space(2)
-            if st.button('Guardar categorías'):
-                c1.success("Categorías guardadas 👍")
-
-        with col3:
-            add_vertical_space(2)
-            if st.button('Actualizar categorías'):
-                c1.warning("Categorías actualizadas 👍")
-
-        updated_list = list_to_string(mask)
-        db.update_categories(userId, updated_list, datetime.now())
-
-        st.markdown("Si quieres añadir emojis a tus categorías, puedes encontrarlos en el siguiente \
-                    [enlace](https://www.webfx.com/tools/emoji-cheat-sheet/)")
-        # cat = st.text_input(label='Ingresa tus categorías separadas por coma',
-        #                     placeholder='comida, trasnporte',)
-
-        # cat = cat.replace(" ", "")
-        # lista = cat.split(",")
-        # st.write(f"Categorías:{lista}")
-        # if st.button("Guardar categorías"):
-        #     db.add_categories(userId, cat)
-        #     st.success("Categorías guardadas")
-        #     time.sleep(3)
-        #     st.rerun()
-
     else:
         st.header("Configuración")
         st.write("Aquí puedes configurar las categorías que más se ajusten a ti.")
 
-        selected_categories = []
+    selected_categories = []
 
-        c1, c2 = st.columns([0.7,0.3])
-        with c1:
-            st.subheader("Categorías disponibles:")
-            col1, col2, col3, col4 = st.columns(4)
+    c1, c2 = st.columns([0.7,0.3])
+    with c1:
+        st.subheader("Categorías disponibles:")
+        col1, col2, col3, col4 = st.columns(4)
 
-            i = 0
-            for col in [col1, col2, col3, col4]:
-                j = 0
-                while j < 3:
-                    cat=default_categories[i]
-                    key = cat+str(i)
-                    if cat in user_categories:
-                        selected_categories.append(col.toggle(cat, value=True, key=key))
-                    else:
-                        selected_categories.append(col.toggle(cat, value=False, key=key))
-                    i+=1
-                    j+=1
+        i = 0
+        for col in [col1, col2, col3, col4]:
+            j = 0
+            while j < 3:
+                cat=default_categories[i]
+                key = cat+str(i)
+                if cat in user_categories:
+                    selected_categories.append(col.toggle(cat, value=True, key=key))
+                else:
+                    selected_categories.append(col.toggle(cat, value=False, key=key))
+                i+=1
+                j+=1
 
-        #use a mask to get the categories that the user selected
-        mask = [x for x, selected in zip(default_categories, selected_categories) if selected]
-        with c2:
-            with st.container(border=True):
-                st.subheader('Estas son tus categorías:')
-                col5, col6 = st.columns(2)
-                k=0
-                for cat in mask:
-                    if k < 6:
-                        col5.write(cat)
-                        k+=1
-                    else:
-                        col6.write(cat)
+        # Custom categories
+        add_vertical_space(1)
+        st.subheader("Categorías personalizadas:")
+        st.markdown("¡También puedes agregar categorías personalizadas! 😎 Escoge un emoji \
+                    en el siguiente \
+                    [enlace](https://www.webfx.com/tools/emoji-cheat-sheet/), haz click en el ícono \
+                    deseado y pégalo en el recuadro. A continuación escribe el nombre de la categoría \
+                    que deseas añadir y actualiza las categorías.")
+
+        user_custom_cat = [cat for cat in user_categories if cat not in default_categories]
+
+        custom_cat = []
+        col_1, col_2, col_3 = st.columns(3)
+        if len(user_custom_cat)==0:
+            with col_1:
+                custom1 = st.text_input(label='Personalizada 1',
+                                        max_chars=20,
+                                        placeholder="🐾 Mascota")
+            with col_2:
+                custom2 = st.text_input(label='Personalizada 2',
+                                        max_chars=20,
+                                        placeholder="👨‍👩‍👦 Familia")
+            with col_3:
+                custom3 = st.text_input(label='Personalizada 3',
+                                        max_chars=20,
+                                        placeholder="🛵 Moto")
+            custom_cat = [custom1, custom2, custom3]
+        else:
+            st.write(" ")
 
         m = st.markdown("""
         <style>
@@ -135,59 +82,60 @@ def user_page(name, userId):
             color:;
         }
         div.stButton > button:hover {
-            background-color: #00ff00;
-            color:#ff0000;
+            background-color: #46847e;
+            color:#000000;
             }
         </style>""", unsafe_allow_html=True)
+        col1, col2, col3, col4 = st.columns(4)
         with col2:
-            add_vertical_space(2)
-            if st.button('Guardar categorías'):
-                c1.success("Categorías guardadas '👍'")
+            add_vertical_space(1)
+            if st.button('Guardar categorías', key='guardar'):
+                c1.success("Categorías guardadas 👍")
 
         with col3:
-            add_vertical_space(2)
-            if st.button('Actualizar categorías'):
-                c1.warning("Categorías actualizadas '👍'")
+            add_vertical_space(1)
+            if st.button('Actualizar categorías', key='actualizar'):
+                c1.warning("Categorías actualizadas 👍")
 
-        st.subheader("Categorías personalizadas:")
-        custom_cat = [cat for cat in user_categories if cat not in default_categories]
+    # Use a mask to get the categories that the user selected
+    mask = [x for x, selected in zip(default_categories, selected_categories) if selected]
+    updated_categories = mask + custom_cat
+    with c2:
+        with st.container(border=True):
+            st.subheader('Estas son tus categorías:')
+            col5, col6 = st.columns(2)
+            k=0
+            for cat in updated_categories:
+                if k < 8:
+                    col5.write(cat)
+                    k+=1
+                else:
+                    col6.write(cat)
 
-        col_1, col_2, col_3, col__ = st.columns(4)
-        if len(custom_cat)==0:
-            with col_1:
-                st.text_input(label='Personalizada 1',
-                              max_chars=20,
-                              placeholder="🐾 Mascota")
-            with col_2:
-                st.text_input(label='Personalizada 2',
-                              max_chars=20,
-                              placeholder="👨‍👩‍👦 Familia")
-            with col_3:
-                st.text_input(label='Personalizada 3',
-                              max_chars=20,
-                              placeholder="🛵 Moto")
-        else:
-            st.write(" ")
+    updated_list = list_to_string(default_categories)
 
-        st.write(" ")
-
-        updated_list = list_to_string(mask)
+    if st.button("Guardar categorías"):
+        with st.spinner('Espera un momento...'):
+            time.sleep(1)
         db.update_categories(userId, updated_list, datetime.now())
+        st.toast("Categorías actualizadas", icon="🚀")
+        time.sleep(3)
+        st.rerun()
 
 
-        # st.subheader("Configuración de categorías 🖋")
-        # st.markdown("Si quieres añadir emojis a tus categorías, puedes encontrarlos en el siguiente \
-        #             [enlace](https://www.webfx.com/tools/emoji-cheat-sheet/)")
+    # st.subheader("Configuración de categorías 🖋")
+    # st.markdown("Si quieres añadir emojis a tus categorías, puedes encontrarlos en el siguiente \
+    #             [enlace](https://www.webfx.com/tools/emoji-cheat-sheet/)")
 
-        # cat = st.text_input(label='Ingresa tus categorías separadas por coma',value=i,
-        #                     placeholder='comida, transporte')
-        # cat = cat.replace(" ", "")
-        # st.write(f"Categorías:{cat}")
+    # cat = st.text_input(label='Ingresa tus categorías separadas por coma',value=i,
+    #                     placeholder='comida, transporte')
+    # cat = cat.replace(" ", "")
+    # st.write(f"Categorías:{cat}")
 
-        # if st.button("Actualizar categorías"):
-        #     with st.spinner('Wait for it...'):
-        #         time.sleep(1)
-        #     db.update_categories(userId, cat, datetime.now())
-        #     st.toast("Categorías actualizadas", icon="🚀")
-        #     time.sleep(3)
-        #     st.rerun()
+    # if st.button("Actualizar categorías"):
+    #     with st.spinner('Wait for it...'):
+    #         time.sleep(1)
+    #     db.update_categories(userId, cat, datetime.now())
+    #     st.toast("Categorías actualizadas", icon="🚀")
+    #     time.sleep(3)
+    #     st.rerun()
